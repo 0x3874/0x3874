@@ -1,7 +1,7 @@
 """Draw flat cartoon face decals (1024x578, transparent bg) with Pillow. Features stay in the middle 45%."""
 from PIL import Image, ImageDraw
 import os, math
-W,H=1024,578; OUT="/home/user/0x3874/short/build/faces/"
+W,H=1024,578; OUT=os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)),"..","build","faces"))+"/"
 K=(0,0,0,255)
 def canvas(): 
     im=Image.new("RGBA",(W,H),(0,0,0,0)); return im,ImageDraw.Draw(im)

@@ -2,7 +2,7 @@
 centred horizontally, vertical middle at 64% of the frame. Writes PNGs + an ffconcat list at 30 fps."""
 import json, re, os
 from PIL import Image, ImageDraw, ImageFont
-R="/home/user/0x3874/short/"; B=R+"build/"; OUT=B+"caps/"; os.makedirs(OUT,exist_ok=True)
+R=os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)),".."))+"/"; B=R+"build/"; OUT=B+"caps/"; os.makedirs(OUT,exist_ok=True)
 W,H=1080,1920; FPS=30
 tm=json.load(open(B+"timing.json")); END_T=tm["END_T"]
 words=[(re.sub(r"[^A-Za-z0-9']","",w[0]),w[1],w[2]) for w in json.load(open(B+"words_final.json"))]

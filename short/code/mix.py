@@ -1,6 +1,6 @@
 """Build the final audio: voice, music bed (step-up on 'Run!'), drone, SFX peaks on word times, blackout silence, loudness."""
 import numpy as np, subprocess, json, math, os, sys
-R="/home/user/0x3874/short/"; B=R+"build/"; SR=44100
+R=os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)),".."))+"/"; B=R+"build/"; SR=44100
 WORDS=json.load(open(B+"words_final.json")); VOICE=json.load(open(B+"words_pre.json"))
 T=lambda i:WORDS[i][1]; E=lambda i:WORDS[i][2]
 NAR_END=37.7; MON_T0=NAR_END+0.22

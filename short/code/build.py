@@ -5,7 +5,7 @@ State is a pure function of time, applied per frame by a frame_change handler (h
 import bpy, sys, math, json, os, random
 from mathutils import Vector, Euler, Matrix, Quaternion
 
-ROOT = "/home/user/0x3874/short/"
+ROOT = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..")) + "/"
 FPS = 30
 MODE = sys.argv[1] if len(sys.argv) > 1 else "stills"
 OUT = os.path.abspath(sys.argv[2]) if len(sys.argv) > 2 else ROOT + "build/stills/"
