@@ -41,6 +41,33 @@ for L_ in (_pl, _kl): LIGHTS_CULL.append(L_)
 MOM = Kid("Mom", 1.0, "#D94F7A", "#3B4A6B", skin="#F5CD30")
 hide(cap_root, True)
 
+
+# ---------------------------------------------------------------- set dressing: depth layers so no wide shot is empty
+_rnd = random.Random(11)
+trunk_m = mat("trunk", hexc("#6B4423")); leaf_m = [mat(f"leaf{i}", hexc(c)) for i, c in enumerate(("#2E7D32", "#256B2B", "#3A8F3A"))]
+dleaf_m = mat("dleaf", hexc("#10261A")); dtrunk_m = mat("dtrunk", hexc("#0C1712"))
+def tree(x, y, h=11, dark=False):
+    box("trunk", (1.4, 1.4, h * 0.55), (x, y, h * 0.275), dtrunk_m if dark else trunk_m)
+    for i_ in range(3):
+        w_ = h * (0.62 - i_ * 0.14); box("leaf", (w_, w_, h * 0.28), (x, y, h * (0.5 + i_ * 0.2)), dleaf_m if dark else leaf_m[i_ % 3])
+def bush(x, y, w=3.2):
+    box("bush", (w, w * 0.8, w * 0.7), (x, y, w * 0.35), leaf_m[_rnd.randrange(3)])
+for (x_, y_, h_) in ((-82, 48, 13), (-76, 62, 11), (-8, 50, 14), (-12, 64, 12), (-88, 78, 15), (-70, 86, 12), (-22, 84, 14), (-4, 92, 16), (-100, 60, 12), (8, 70, 13)):
+    tree(x_, y_, h_)
+for x_ in range(-260, 140, 11): tree(x_ + _rnd.uniform(-3, 3), 150 + _rnd.uniform(-8, 8), _rnd.uniform(15, 26), dark=True)
+for (hx, hy, c_) in ((-120, 104, "#8B3A3A"), (-6, 112, "#3B6EA8"), (60, 100, "#5E8F4F"), (-150, 125, "#B58A3A")):
+    wm_ = mat(f"far{hx}", hexc(c_)); box("fhouse", (22, 16, 11), (hx, hy, 5.5), wm_); box("froof", (24, 18, 3), (hx, hy, 12.5), roof_mat)
+    box("fwin", (3.4, 0.3, 3.4), (hx - 5, hy - 8.1, 6.2), win_mat); box("fwin", (3.4, 0.3, 3.4), (hx + 5, hy - 8.1, 6.2), win_mat)
+for x_ in (-66, -60, -26, -22, -64.5, -24): bush(x_, HBACK + 3.2, 3.4)
+for x_ in (-66, -63, -27, -24): bush(x_, YARD_N - 2.0, 2.6)
+for i_, (x_, y_) in enumerate(((-52, 46), (-50.6, 51), (-49.2, 56), (-47.6, 61))): box("stone", (2.2, 2.2, 0.25), (x_, y_, 0.12), mat("stone", hexc("#8A8F9C")))
+box("shed", (7, 6, 6.5), (-28, 58, 3.25), mat("shed", hexc("#9B4A3A"))); box("shedroof", (8, 7, 1), (-28, 58, 6.9), roof_mat)
+tuft_m = mat("tuft", hexc("#4E9A3A"))
+for _ in range(90):
+    x_, y_ = _rnd.uniform(-69, -21), _rnd.uniform(HBACK + 3, YARD_N - 1)
+    if -53 < x_ < -43 and y_ > 44: continue
+    for k_ in range(3): box("tuft", (0.18, 0.18, _rnd.uniform(0.7, 1.4)), (x_ + k_ * 0.25, y_ + _rnd.uniform(-0.2, 0.2), 0.5), tuft_m, rot=(0, _rnd.uniform(-0.3, 0.3), 0))
+
 # ---------------------------------------------------------------- shots
 C = []
 def S(start, c0, t0, fov, c1=None, t1=None, fov1=None, **kw):

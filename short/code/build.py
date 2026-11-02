@@ -149,7 +149,7 @@ moon = light("moon", "SUN", 0.55, hexc("#9EB8FF"), (0, 0, 50), radius=0.02)
 moon.data.angle = math.radians(1.0)
 moon.rotation_euler = Euler((math.radians(52), math.radians(8), math.radians(-35)))
 moon_disc = bpy.data.objects.new("moon_disc", bpy.data.meshes.new("md")); sc.collection.objects.link(moon_disc)
-bpy.ops.mesh.primitive_uv_sphere_add(radius=14, location=(-380, 520, 330)); md = bpy.context.object
+bpy.ops.mesh.primitive_uv_sphere_add(radius=26, location=(-300, 560, 400)); md = bpy.context.object
 md.data.materials.append(mat("moon_disc", hexc("#9EB8FF"), emit=3.0)); MOON_MAT = md.data.materials[0]
 bpy.data.objects.remove(moon_disc)
 
