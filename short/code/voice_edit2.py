@@ -47,7 +47,10 @@ final=np.concatenate(audio); wt=[(w[0],remap(w[1]),remap(w[2]),line_of[k]) for k
 ml=cfg["monster_line"]; mi=[k for k,x in enumerate(wt) if x[3]==ml]
 split=(wt[mi[0]-1][2]+wt[mi[0]][1])/2
 def save(x,name): subprocess.run(["ffmpeg","-v","error","-y","-f","f32le","-ar",str(SR),"-ac","1","-i","-",name],input=x.astype(np.float32).tobytes(),check=True)
-save(final[:int(split*SR)],S+"nar_pre.wav"); save(final[int(split*SR):],S+"mon_pre.wav")
+mon=final[int(split*SR):]
+act=np.where(np.abs(mon)>10**(-50/20))[0]; lead=max(0,act[0]-int(0.03*SR)) if len(act) else 0; tail=min(len(mon),act[-1]+int(0.05*SR)) if len(act) else len(mon)
+mon=mon[lead:tail]; split=split+lead/SR      # trim silence around the monster line so it lands exactly 0.22 s after the narration
+save(final[:int((split-lead/SR)*SR)],S+"nar_pre.wav"); save(mon,S+"mon_pre.wav")
 json.dump({"words":wt,"split":split,"tempo":TEMPO,"mon_first":mi[0],"monster_line":ml},open(S+"words_pre.json","w"))
 sub=lambda i,o,f:subprocess.run(["ffmpeg","-v","error","-y","-i",i,"-af",f,o],check=True)
 sub(S+"nar_pre.wav",S+"nar.wav",f"atempo={TEMPO}")
