@@ -1,4 +1,4 @@
-short/build/frames/
-short/build/stills/
-short/build/caps/
+build/frames/
+build/stills/
+build/caps/
 *.log
