@@ -1,13 +1,13 @@
 """One-word-at-a-time captions: Montserrat ExtraBold 104 px, white, 13 px black outline, black shadow 4 right / 7 down @60%, key nouns red,
 centred horizontally, vertical middle at 64% of the frame. Writes PNGs + an ffconcat list at 30 fps."""
-import json, re, os
+import json, re, os, sys
 from PIL import Image, ImageDraw, ImageFont
-R=os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)),".."))+"/"; B=R+"build/"; OUT=B+"caps/"; os.makedirs(OUT,exist_ok=True)
+R=os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)),".."))+"/"; B=(os.path.abspath(sys.argv[1])+"/") if len(sys.argv)>1 else R+"build/"; OUT=B+"caps/"; os.makedirs(OUT,exist_ok=True)
 W,H=1080,1920; FPS=30
 tm=json.load(open(B+"timing.json")); END_T=tm["END_T"]
 words=[(re.sub(r"[^A-Za-z0-9']","",w[0]),w[1],w[2]) for w in json.load(open(B+"words_final.json"))]
 words+= [(re.sub(r"[^A-Za-z0-9']","",w[0]),w[1],w[2]) for w in tm["MON_WORDS"]]
-RED={"lamp","lamps","cap","boy","light","shutters","doors","door","flashlight","sister","house","lock","black","winter"}
+RED=set(json.load(open(B+"story.json")).get("red",[])) if len(sys.argv)>1 else {"lamp","lamps","cap","boy","light","shutters","doors","door","flashlight","sister","house","lock","black","winter"}
 font=ImageFont.truetype(R+"fonts/Montserrat-ExtraBold.ttf",104)
 def title(w): return w[:1].upper()+w[1:].lower() if not w.lower().startswith("noah") else "Noah's"
 def render(word,red):
@@ -34,4 +34,5 @@ for s,e,fn in items:
     if e>s: lines+= [f"file {fn}",f"duration {e-max(s,t):.5f}"]
     t=max(t,e)
 lines+= [f"file {OUT}blank.png",f"duration {max(0.05,END_T-t):.5f}",f"file {OUT}blank.png"]
+lines=[l.replace(chr(92),"/") for l in lines]
 open(B+"caps.txt","w").write("\n".join(lines)+"\n"); print(len(items),"captions, ends",round(t,2))

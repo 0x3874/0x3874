@@ -11,9 +11,14 @@ MODE = sys.argv[1] if len(sys.argv) > 1 else "stills"
 OUT = os.path.abspath(sys.argv[2]) if len(sys.argv) > 2 else ROOT + "build/stills/"
 RANGE = (int(sys.argv[3]), int(sys.argv[4])) if len(sys.argv) > 4 else None
 
-WORDS = json.load(open(ROOT + "build/words_final.json"))
-NAR_END = 37.7
-VOICE = json.load(open(ROOT + "build/words_pre.json"))
+STORY = os.environ.get("STORY")
+SD = ROOT + (f"stories/{STORY}/" if STORY else "build/")
+WORDS = json.load(open(SD + "words_final.json"))
+import wave as _wave
+def _wl(p):
+    with _wave.open(p) as w_: return w_.getnframes() / w_.getframerate()
+NAR_END = _wl(SD + "nar.wav") if STORY else 37.7
+VOICE = json.load(open(SD + "words_pre.json"))
 def T(i): return WORDS[i][1]
 MON_T0 = NAR_END + 0.22                    # monster line starts
 MON_LATE = MON_T0 + 1.15                   # approx start of "late" (refined below)
@@ -361,7 +366,7 @@ POSES = {  # larm, rarm, lleg, rleg, lean, headyaw, headpitch  (degrees; +arm = 
     "idle": (0, 0, 0, 0, 0, 0, 0), "walk": (0, 0, 0, 0, 0, 0, 0), "scared": (35, 35, 0, 0, -6, 0, -8),
     "panic": (150, 150, 0, 0, -10, 0, -10), "look": (20, 20, 0, 0, -8, 150, 0), "point": (0, 95, 0, 0, 0, 0, 0),
     "grab": (0, 60, 0, 0, 3, 0, -6), "flash": (0, 52, 0, 0, 3, 0, 0), "brace": (60, 60, 0, 0, 0, 0, -12), "pound": (0, 90, 0, 0, 3, 0, -8),
-    "crouch": (50, 50, 55, 55, 10, 0, 0), "side": (0, 70, 0, 0, 3, -85, 0),
+    "crouch": (50, 50, 55, 55, 10, 0, 0), "cover": (0, 115, 0, 0, -2, 0, -6), "side": (0, 70, 0, 0, 3, -85, 0),
 }
 def lerp(a, b, k): return a + (b - a) * k
 def track_val(ev, t, dur=0.14, ease=back):
@@ -405,6 +410,8 @@ def apply_kid(kid, spec, t):
         if gait == "run": lean = 9
         if spec.get("flasharm") and gait == "run": rarm = 52
         bob = 0.25 * s * abs(math.cos(ph))
+    elif gait == "stir":
+        rarm = 55 + 28 * math.sin(2 * math.pi * 1.2 * t); larm = 20; hyaw += 3 * math.sin(2 * math.pi * 0.4 * t)
     else:
         hyaw += 4 * math.sin(2 * math.pi * 0.5 * t + spec.get("phase", 0))   # idle sway so nothing is dead still
         bob = 0.05 * math.sin(2 * math.pi * 0.9 * t)
@@ -442,6 +449,7 @@ def update(frame):
     hide(cap_root, t < T(20) + 0.0)
     for hp, sgn in SHUT:
         hp.rotation_euler.z = math.radians(-sgn * 100 * (1 - back((t - T(35)) / 0.14)) if t >= T(35) else -sgn * 100)
+    if "story_update" in globals(): story_update(t)
     # world states
     dark = in_blackout(t)
     for L in LAMPS:
@@ -480,7 +488,7 @@ def on_frame(scene, *a): update(scene.frame_current)
 bpy.app.handlers.frame_change_pre.clear(); bpy.app.handlers.frame_change_pre.append(on_frame)
 bpy.app.handlers.render_pre.clear(); bpy.app.handlers.render_pre.append(lambda s, *a: update(s.frame_current))
 
-exec(open(ROOT + "code/shots.py").read())
+exec(open((SD + "shots.py") if STORY else (ROOT + "code/shots.py")).read())
 # ------------------------------------------------------------------ run
 sc.frame_start, sc.frame_end = 0, int(END_T * FPS)
 os.makedirs(OUT, exist_ok=True)
