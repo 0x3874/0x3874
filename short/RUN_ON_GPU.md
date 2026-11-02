@@ -1,5 +1,5 @@
 # Render the Short at full quality on a GPU machine
-Needs Python 3.11, FFmpeg, and: `pip install bpy==5.2.3 numpy pillow fonttools`
+Needs Python 3.13 (what this was tested on; not 3.14+), FFmpeg, and: `pip install bpy==5.2.3 numpy pillow fonttools`
 (Windows/Mac: no xvfb needed. Linux with a GPU: run under a normal desktop or `xvfb-run -a`.)
 
 1. Review one frame:   `PCT=50 SAMPLES=12 python code/build.py frame build/stills 640`
