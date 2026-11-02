@@ -1,13 +1,15 @@
 # exec'd inside build.py: shot list, actor timelines, and world-state functions (all pure functions of time t)
-import subprocess
 def W(i): return T(i) - 0.04
 tD = T(88) + 0.06               # last lamp (and everything) dies
 tB = W(92)                      # lights come back
 def in_blackout(t): return tD <= t < tB
 
 # monster line timing (from the pre-tempo word times, scaled to the processed file)
-_pre_len = float(subprocess.check_output(["ffprobe", "-v", "error", "-show_entries", "format=duration", "-of", "csv=p=0", ROOT + "build/mon_pre.wav"]))
-_mon_len = float(subprocess.check_output(["ffprobe", "-v", "error", "-show_entries", "format=duration", "-of", "csv=p=0", ROOT + "build/mon.wav"]))
+import wave
+def _wav_len(p):
+    with wave.open(p) as w_: return w_.getnframes() / w_.getframerate()
+_pre_len = _wav_len(ROOT + "build/mon_pre.wav")
+_mon_len = _wav_len(ROOT + "build/mon.wav")
 _mw = [x for x in VOICE["words"] if x[3] == 22]
 MON_LATE = MON_T0 + (_mw[-1][1] - VOICE["split"]) * (_mon_len / _pre_len)
 MON_END = MON_T0 + _mon_len
