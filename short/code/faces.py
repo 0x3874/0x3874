@@ -26,6 +26,7 @@ def make():
     for s in(-1,1): d.ellipse((cx+s*ex-30,cy-60,cx+s*ex+30,cy+0),outline=K,width=10)
     d.ellipse((cx-24,cy+45,cx+24,cy+105),fill=K); faces["shock"]=im
     im,d=canvas(); eye(d,cx-ex,cy-25,22,34);eye(d,cx+ex,cy-25,22,34); brow(d,cx-ex-40,cy-85,cx-ex+40,cy-100,16); brow(d,cx+ex+40,cy-85,cx+ex-40,cy-100,16); d.line((cx-60,cy+55,cx+60,cy+50),fill=K,width=16); faces["determined"]=im
+    im,d=canvas(); eye(d,cx-ex,cy-30); d.arc((cx+ex-30,cy-45,cx+ex+30,cy-5),200,340,fill=K,width=16); smile(d,cx,cy+10,120,70); faces["wink"]=im
     for k,v in faces.items(): v.save(OUT+k+".png")
     # monster: white glowing face. hollow tilted eyes (rings, no pupils) + grin too wide with gaps between teeth
     im,d=canvas(); Wt=(255,255,255,255)

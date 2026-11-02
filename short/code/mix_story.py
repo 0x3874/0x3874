@@ -42,6 +42,7 @@ for f,d,(kind,i,off) in cfg["sfx"]:
     x,k=sfx(f,d,at,tail=(1.0 if f in("788","2782") else None))
     if k<0: x=x[-k:]; k=0
     n=min(len(x),N-k); fx[k:k+n]+=x[:n]
+dr = dr if cfg.get("drone", True) else dr*0
 tot=(voice+bed+dr+fx)[:int(END_T*SR)].astype(np.float32)
 def lufs(x):
     o=subprocess.run(["ffmpeg","-nostats","-f","f32le","-ar",str(SR),"-ac","1","-i","-","-af","ebur128","-f","null","-"],input=x.astype(np.float32).tobytes(),capture_output=True).stderr.decode()
