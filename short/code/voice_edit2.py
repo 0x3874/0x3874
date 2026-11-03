@@ -9,7 +9,9 @@ raw=pcm(S+"voice_raw.wav")
 m=WhisperModel("large-v3-turbo",device="cpu",compute_type="int8")
 seg,_=m.transcribe(pcm(S+"voice_raw.wav",16000),word_timestamps=True,language="en")
 words=[(x.word.strip(),float(x.start),float(x.end)) for s in seg for x in s.words]
-norm=lambda t:re.sub(r"[^a-z0-9']","",t.lower())
+_NUM = {str(i): w for i, w in enumerate("zero one two three four five six seven eight nine ten eleven twelve thirteen fourteen fifteen sixteen seventeen eighteen nineteen twenty".split())}
+def norm(t):
+    x = re.sub(r"[^a-z0-9']", "", t.lower()); return _NUM.get(x, x)
 Sx=[(norm(t),li) for li,l in enumerate(lines) for t in l.split()]
 sm=difflib.SequenceMatcher(None,[s[0] for s in Sx],[norm(w[0]) for w in words],autojunk=False)
 mp={}

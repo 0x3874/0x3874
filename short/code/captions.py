@@ -9,7 +9,11 @@ words=[(re.sub(r"[^A-Za-z0-9']","",w[0]),w[1],w[2]) for w in json.load(open(B+"w
 words+= [(re.sub(r"[^A-Za-z0-9']","",w[0]),w[1],w[2]) for w in tm["MON_WORDS"]]
 RED=set(json.load(open(B+"story.json")).get("red",[])) if len(sys.argv)>1 else {"lamp","lamps","cap","boy","light","shutters","doors","door","flashlight","sister","house","lock","black","winter"}
 font=ImageFont.truetype(R+"fonts/Montserrat-ExtraBold.ttf",104)
-def title(w): return w[:1].upper()+w[1:].lower() if not w.lower().startswith("noah") else "Noah's"
+_NUMW = {str(i): w for i, w in enumerate('zero one two three four five six seven eight nine ten eleven twelve thirteen fourteen'.split())}
+def title(w):
+    w = _NUMW.get(w, w) if w else w
+    w = ({'13th': 'thirteenth', '12': 'twelve'}).get(w, w)
+    return w[:1].upper()+w[1:].lower() if not w.lower().startswith("noah") else "Noah's"
 def render(word,red):
     im=Image.new("RGBA",(W,H),(0,0,0,0)); 
     d=ImageDraw.Draw(im); x,y=W/2,0.64*H
